@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>bundleid</key>
-	<string>me.i47.appstore</string>
+	<string>alfred.workflow.appstore</string>
 	<key>connections</key>
 	<dict>
 		<key>008BEB46-2A21-4D90-A585-9E220A388C69</key>
@@ -30,7 +30,7 @@
 		</array>
 	</dict>
 	<key>createdby</key>
-	<string>i47</string>
+	<string>Siqi.Yi</string>
 	<key>description</key>
 	<string>Search Apps in Store</string>
 	<key>disabled</key>
@@ -66,32 +66,32 @@
 				<key>runningsubtext</key>
 				<string>Searching now, please wait...</string>
 				<key>script</key>
-				<string>require_once('workflows.php');
+				<string>require_once(&apos;workflows.php&apos;);
 $wf = new Workflows();
 
-$orig = "{query}";
-$json = $wf-&gt;request( "http://itunes.apple.com/search?country=cn&amp;entity=macSoftware&amp;limit=25&amp;term=".urlencode( $orig ) );
+$orig = &quot;{query}&quot;;
+$json = $wf-&gt;request( &quot;http://itunes.apple.com/search?country=cn&amp;entity=macSoftware&amp;limit=25&amp;term=&quot;.urlencode( $orig ) );
 $json = json_decode( $json, ture);
 $int = 1;
-$json=$json['results'];
+$json=$json[&apos;results&apos;];
 
-$wf-&gt;result( "searchinstore", "macappstore://ax.search.itunes.apple.com/WebObjects/MZSearch.woa/wa/search?q=".urlencode( $orig ), 'Search apps with keyword "'.$orig.'"', 'Open iTunes and search apps with what you type.', "icon.png"  );
+$wf-&gt;result( &quot;searchinstore&quot;, &quot;macappstore://ax.search.itunes.apple.com/WebObjects/MZSearch.woa/wa/search?q=&quot;.urlencode( $orig ), &apos;Search apps with keyword &quot;&apos;.$orig.&apos;&quot;&apos;, &apos;Open iTunes and search apps with what you type.&apos;, &quot;icon.png&quot;  );
 
 //*
 foreach( $json as $sugg ):
-	$data = $sugg['trackName'];
-	$url = preg_replace("/^https?/", "macappstore", $sugg['trackViewUrl']);
-	//$icon = $sugg['artworkUrl60'];
-	$icon = "icon.png";
+	$data = $sugg[&apos;trackName&apos;];
+	$url = preg_replace(&quot;/^https?/&quot;, &quot;macappstore&quot;, $sugg[&apos;trackViewUrl&apos;]);
+	//$icon = $sugg[&apos;artworkUrl60&apos;];
+	$icon = &quot;icon.png&quot;;
 	$wf-&gt;result( 
-		$int.'.'.time()
-		, "$url"
-		, "$data"
-		, $sugg['formattedPrice']
-			.'  	Version '.$sugg['version']
-			.'  	Ratings  '.number_format($sugg['averageUserRating'], 1, '.', '')
-			.' / 5	from '.number_format($sugg['userRatingCount'])
-			.' users  by '.$sugg['artistName']
+		$int.&apos;.&apos;.time()
+		, &quot;$url&quot;
+		, &quot;$data&quot;
+		, $sugg[&apos;formattedPrice&apos;]
+			.&apos;  	Version &apos;.$sugg[&apos;version&apos;]
+			.&apos;  	Ratings  &apos;.number_format($sugg[&apos;averageUserRating&apos;], 1, &apos;.&apos;, &apos;&apos;)
+			.&apos; / 5	from &apos;.number_format($sugg[&apos;userRatingCount&apos;])
+			.&apos; users  by &apos;.$sugg[&apos;artistName&apos;]
 		, $icon  );
 	$int++;
 endforeach;
@@ -99,7 +99,7 @@ endforeach;
 $results = $wf-&gt;results();
 if ( count( $results ) == 1 ):
 	$wf-&gt;popresults();
-	$wf-&gt;result( 'googlesuggest', 'https://www.google.com/search?ie=UTF-8&amp;oe=UTF-8&amp;q='.urlencode( $orig ), 'Nothing Found', 'No search apps found. Search Google for '.$orig, 'icon.png' );
+	$wf-&gt;result( &apos;googlesuggest&apos;, &apos;https://www.google.com/search?ie=UTF-8&amp;oe=UTF-8&amp;q=&apos;.urlencode( $orig ), &apos;Nothing Found&apos;, &apos;No search apps found. Search Google for &apos;.$orig, &apos;icon.png&apos; );
 endif;
 
 echo $wf-&gt;toxml();</string>
@@ -129,41 +129,41 @@ echo $wf-&gt;toxml();</string>
 				<key>runningsubtext</key>
 				<string>Searching now, please wait...</string>
 				<key>script</key>
-				<string>require_once('workflows.php');
+				<string>require_once(&apos;workflows.php&apos;);
 $wf = new Workflows();
 
-$orig = "{query}";
-$json = $wf-&gt;request( "http://itunes.apple.com/search?country=cn&amp;entity=software&amp;limit=25&amp;term=".urlencode( $orig ) );
+$orig = &quot;{query}&quot;;
+$json = $wf-&gt;request( &quot;http://itunes.apple.com/search?country=cn&amp;entity=software&amp;limit=25&amp;term=&quot;.urlencode( $orig ) );
 $json = json_decode( $json, ture);
 $int = 1;
-$json=$json['results'];
+$json=$json[&apos;results&apos;];
 
-$wf-&gt;result( "searchinstore", "itunes://ax.search.itunes.apple.com/WebObjects/MZSearch.woa/wa/search?term=".urlencode( $orig ), 'Search apps with keyword "'.$orig.'"', 'Open iTunes and search apps with what you type.', "icon.png"  );
+$wf-&gt;result( &quot;searchinstore&quot;, &quot;itunes://ax.search.itunes.apple.com/WebObjects/MZSearch.woa/wa/search?term=&quot;.urlencode( $orig ), &apos;Search apps with keyword &quot;&apos;.$orig.&apos;&quot;&apos;, &apos;Open iTunes and search apps with what you type.&apos;, &quot;icon.png&quot;  );
 
 
 foreach( $json as $sugg ):
-	$data = $sugg['trackCensoredName'];
-	$url = preg_replace("/^https?/", "itunes", $sugg['trackViewUrl']);
+	$data = $sugg[&apos;trackCensoredName&apos;];
+	$url = preg_replace(&quot;/^https?/&quot;, &quot;itunes&quot;, $sugg[&apos;trackViewUrl&apos;]);
 	
-	$type = "for iPhone	";
+	$type = &quot;for iPhone	&quot;;
 	
-	if( in_array("iosUniversal", $sugg['features']) ):
-		$type = "Universal	";
+	if( in_array(&quot;iosUniversal&quot;, $sugg[&apos;features&apos;]) ):
+		$type = &quot;Universal	&quot;;
 	endif;
 	
-	if( count($sugg['screenshotUrls']) == 0):
-		$type = "for iPad	";
+	if( count($sugg[&apos;screenshotUrls&apos;]) == 0):
+		$type = &quot;for iPad	&quot;;
 	endif;
 
 	$wf-&gt;result( 
-		$int.'.'.time()
-		, "$url", "$data"
-		, $type.' '.$sugg['formattedPrice']
-			.' 	Version '.$sugg['version']
-			.'  	Ratings : '.number_format($sugg['averageUserRating'], 1, '.', '')
-			.' / 5	from '.number_format($sugg['userRatingCount'])
-			.' users  by '.$sugg['artistName']
-		, "icon.png"  );
+		$int.&apos;.&apos;.time()
+		, &quot;$url&quot;, &quot;$data&quot;
+		, $type.&apos; &apos;.$sugg[&apos;formattedPrice&apos;]
+			.&apos; 	Version &apos;.$sugg[&apos;version&apos;]
+			.&apos;  	Ratings : &apos;.number_format($sugg[&apos;averageUserRating&apos;], 1, &apos;.&apos;, &apos;&apos;)
+			.&apos; / 5	from &apos;.number_format($sugg[&apos;userRatingCount&apos;])
+			.&apos; users  by &apos;.$sugg[&apos;artistName&apos;]
+		, &quot;icon.png&quot;  );
 	$int++;
 endforeach;
 
@@ -171,7 +171,7 @@ $results = $wf-&gt;results();
 if ( count( $results ) == 1 ):
 
 	$wf-&gt;popresults();
-	$wf-&gt;result( 'googlesuggest', 'https://www.google.com/search?ie=UTF-8&amp;oe=UTF-8&amp;q='.urlencode( $orig ), 'Nothing Found', 'No search apps found. Search Google for '.$orig, 'GoogleIcon.png' );
+	$wf-&gt;result( &apos;googlesuggest&apos;, &apos;https://www.google.com/search?ie=UTF-8&amp;oe=UTF-8&amp;q=&apos;.urlencode( $orig ), &apos;Nothing Found&apos;, &apos;No search apps found. Search Google for &apos;.$orig, &apos;GoogleIcon.png&apos; );
 endif;
 
 echo $wf-&gt;toxml();</string>
@@ -211,6 +211,6 @@ echo $wf-&gt;toxml();</string>
 		</dict>
 	</dict>
 	<key>webaddress</key>
-	<string>http://i47.me</string>
+	<string>http://yisiqi.github.com</string>
 </dict>
 </plist>
