@@ -36,7 +36,7 @@
 	<key>disabled</key>
 	<false/>
 	<key>name</key>
-	<string>App Store - COPY</string>
+	<string>App Store</string>
 	<key>objects</key>
 	<array>
 		<dict>
@@ -254,7 +254,7 @@ for app in data['results']:
   subtitle = [price, ver, rat, dev]
   subtitle = '\t'.join(subtitle)
 
-  icon = ('app.icon.png', {'type': 'png'})
+  icon = ('icon.png', {'type': 'png'})
 
   item = alfred.Item({'uid': 1, 'arg': url}, title, subtitle, icon)
   results.append(item)
