@@ -36,9 +36,121 @@
 	<key>disabled</key>
 	<false/>
 	<key>name</key>
-	<string>App Store</string>
+	<string>App Store - COPY</string>
 	<key>objects</key>
 	<array>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>argumenttype</key>
+				<integer>0</integer>
+				<key>escaping</key>
+				<integer>0</integer>
+				<key>keyword</key>
+				<string>app</string>
+				<key>queuedelaycustom</key>
+				<integer>3</integer>
+				<key>queuedelayimmediatelyinitially</key>
+				<false/>
+				<key>queuedelaymode</key>
+				<integer>0</integer>
+				<key>queuemode</key>
+				<integer>1</integer>
+				<key>runningsubtext</key>
+				<string>Searching now, please wait...</string>
+				<key>script</key>
+				<string>#!/usr/bin/python
+#_*_ coding:UTF-8 _*_
+#
+# Copyright by Yi Siqi. All Rights Reserved.
+
+from datetime import datetime
+import json
+import urllib
+import urllib2
+
+import alfred
+import i18n
+
+theQuery = '{query}'
+queryParam = { 'country':i18n.dic['COUNTRY'], 'limit':'25', 'term': theQuery }
+url = 'http://itunes.apple.com/search?entity=software,iPadSoftware&amp;%s' % urllib.urlencode(queryParam)
+
+request = urllib2.Request(url)
+request.add_header('Accept','application/json')
+request.add_header('Content-Type','application/json')
+req_open = urllib2.build_opener()
+conn = req_open.open(request)
+req_data = conn.read()
+data = json.loads(req_data)
+
+results = []
+
+for app in data['results']:
+  
+  title = app['trackCensoredName']
+  url = app['trackViewUrl']
+  
+  price = app['price']
+  if (price == 0):
+    price = i18n.dic['FREE']
+  else:
+    price = i18n.dic[app['currency']] + '%-3.2f' % price
+
+  device = i18n.dic['FOR_IPAD']
+  if 'iosUniversal' in app['features']:
+    device = i18n.dic['UNIVERSAL']
+  elif ', '.join(app['supportedDevices']).find('iPhone') &gt;= 0:
+    device = i18n.dic['FOR_IPHONE']
+
+  ver = '%s: %s' % (i18n.dic['VERSION'], app['version'])
+  # if len(ver) &lt; 13:
+  #  ver += '\t'
+
+  try:
+    aur = app['averageUserRating']
+    urc = app['userRatingCount']
+  except KeyError as e:
+    aur = 0
+    urc = 0
+  rat = '%s: %3.1f %s %8.0f %s' % (i18n.dic['RATINGS'], aur, i18n.dic['RAT_COUNT'], urc, i18n.dic['RAT_TAIL'])
+  if len('%s' % urc) &lt; 3:
+    rat += '\t'
+
+  dev = '%s: %s' % (i18n.dic['BY'], app['sellerName'])
+
+  subtitle = [device, price, ver, rat, dev]
+  subtitle = '\t'.join(subtitle)
+
+  icon = ('icon.png', {'type': 'png'})
+
+  item = alfred.Item({'uid': 1, 'arg': url}, title, subtitle, icon)
+  results.append(item)
+
+if len(data['results']) == 0:
+  url = 'https://www.google.com/#newwindow=1&amp;%s' % urllib.urlencode({'q':theQuery})
+  item = alfred.Item({'uid': 1, 'arg': url}, i18n.dic['NULL_TITLE'], i18n.dic['NULL_SUBTITLE'], ('GoogleIcon.png', {'type': 'png'}))
+  results.append(item)
+
+xml = alfred.xml(results)
+alfred.write(xml)
+</string>
+				<key>subtext</key>
+				<string>Find apps in iTunes App Store</string>
+				<key>title</key>
+				<string>Find Apps in Store</string>
+				<key>type</key>
+				<integer>3</integer>
+				<key>withspace</key>
+				<true/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.input.scriptfilter</string>
+			<key>uid</key>
+			<string>93843284-FB0D-40F4-9660-FD9D9F19CFA9</string>
+			<key>version</key>
+			<integer>0</integer>
+		</dict>
 		<dict>
 			<key>config</key>
 			<dict>
@@ -53,6 +165,8 @@
 			<string>alfred.workflow.action.openurl</string>
 			<key>uid</key>
 			<string>514C7F51-5631-4B4C-9409-6EED2A62F6B8</string>
+			<key>version</key>
+			<integer>0</integer>
 		</dict>
 		<dict>
 			<key>config</key>
@@ -63,52 +177,102 @@
 				<integer>36</integer>
 				<key>keyword</key>
 				<string>mas</string>
+				<key>queuedelaycustom</key>
+				<integer>1</integer>
+				<key>queuedelayimmediatelyinitially</key>
+				<false/>
+				<key>queuedelaymode</key>
+				<integer>0</integer>
+				<key>queuemode</key>
+				<integer>1</integer>
 				<key>runningsubtext</key>
 				<string>Searching now, please wait...</string>
 				<key>script</key>
-				<string>require_once(&apos;workflows.php&apos;);
-$wf = new Workflows();
+				<string>#!/usr/bin/python
+#_*_ coding:UTF-8 _*_
+#
+# Copyright by Yi Siqi. All Rights Reserved.
 
-$orig = &quot;{query}&quot;;
-$json = $wf-&gt;request( &quot;http://itunes.apple.com/search?country=cn&amp;entity=macSoftware&amp;limit=25&amp;term=&quot;.urlencode( $orig ) );
-$json = json_decode( $json, ture);
-$int = 1;
-$json=$json[&apos;results&apos;];
+from datetime import datetime
+import json
+import urllib
+import urllib2
 
-$wf-&gt;result( &quot;searchinstore&quot;, &quot;macappstore://ax.search.itunes.apple.com/WebObjects/MZSearch.woa/wa/search?q=&quot;.urlencode( $orig ), &apos;Search apps with keyword &quot;&apos;.$orig.&apos;&quot;&apos;, &apos;Open iTunes and search apps with what you type.&apos;, &quot;icon.png&quot;  );
+import alfred
+import i18n
 
-//*
-foreach( $json as $sugg ):
-	$data = $sugg[&apos;trackName&apos;];
-	$url = preg_replace(&quot;/^https?/&quot;, &quot;macappstore&quot;, $sugg[&apos;trackViewUrl&apos;]);
-	//$icon = $sugg[&apos;artworkUrl60&apos;];
-	$icon = &quot;icon.png&quot;;
-	$wf-&gt;result( 
-		$int.&apos;.&apos;.time()
-		, &quot;$url&quot;
-		, &quot;$data&quot;
-		, $sugg[&apos;formattedPrice&apos;]
-			.&apos;  	Version &apos;.$sugg[&apos;version&apos;]
-			.&apos;  	Ratings  &apos;.number_format($sugg[&apos;averageUserRating&apos;], 1, &apos;.&apos;, &apos;&apos;)
-			.&apos; / 5	from &apos;.number_format($sugg[&apos;userRatingCount&apos;])
-			.&apos; users  by &apos;.$sugg[&apos;artistName&apos;]
-		, $icon  );
-	$int++;
-endforeach;
+curs = { 'CNY': u'￥', 'USD': u'$' }
 
-$results = $wf-&gt;results();
-if ( count( $results ) == 1 ):
-	$wf-&gt;popresults();
-	$wf-&gt;result( &apos;googlesuggest&apos;, &apos;https://www.google.com/search?ie=UTF-8&amp;oe=UTF-8&amp;q=&apos;.urlencode( $orig ), &apos;Nothing Found&apos;, &apos;No search apps found. Search Google for &apos;.$orig, &apos;icon.png&apos; );
-endif;
+theQuery = '{query}'
+queryParam = { 'country':i18n.dic['COUNTRY'], 'limit':'25', 'term': theQuery }
+url = 'http://itunes.apple.com/search?entity=macSoftware&amp;%s' % urllib.urlencode(queryParam)
 
-echo $wf-&gt;toxml();</string>
+request = urllib2.Request(url)
+request.add_header('Accept','application/json')
+request.add_header('Content-Type','application/json')
+req_open = urllib2.build_opener()
+conn = req_open.open(request)
+req_data = conn.read()
+data = json.loads(req_data)
+
+results = []
+
+for app in data['results']:
+  
+  title = app['trackCensoredName']
+  url = app['trackViewUrl']
+  
+  price = app['price']
+  if (price == 0):
+    price = i18n.dic['FREE'] + u'\t'
+  else:
+    price = i18n.dic[app['currency']] + '%-3.2f' % price
+
+  # device = i18n.dic['FOR_IPAD']
+  # if 'iosUniversal' in app['features']:
+  #   device = i18n.dic['UNIVERSAL']
+  # elif ', '.join(app['supportedDevices']).find('iPhone') &gt;= 0:
+  #   device = i18n.dic['FOR_IPHONE']
+
+  ver = '%s: %s' % (i18n.dic['VERSION'], app['version'])
+  # if len(ver) &lt; 13:
+  #  ver += '\t'
+
+  try:
+    aur = app['averageUserRating']
+    urc = app['userRatingCount']
+  except KeyError as e:
+    aur = 0
+    urc = 0
+  rat = '%s: %3.1f %s %8.0f %s' % (i18n.dic['RATINGS'], aur, i18n.dic['RAT_COUNT'], urc, i18n.dic['RAT_TAIL'])
+  if len('%s' % urc) &lt; 3:
+    rat += '\t'
+
+  dev = '%s: %s' % (i18n.dic['BY'], app['sellerName'])
+
+  # subtitle = [device, price, ver, rat, dev]
+  subtitle = [price, ver, rat, dev]
+  subtitle = '\t'.join(subtitle)
+
+  icon = ('app.icon.png', {'type': 'png'})
+
+  item = alfred.Item({'uid': 1, 'arg': url}, title, subtitle, icon)
+  results.append(item)
+
+if len(data['results']) == 0:
+  url = 'https://www.google.com/#newwindow=1&amp;%s' % urllib.urlencode({'q':theQuery})
+  item = alfred.Item({'uid': 1, 'arg': url}, i18n.dic['NULL_TITLE'], i18n.dic['NULL_SUBTITLE'], ('GoogleIcon.png', {'type': 'png'}))
+  results.append(item)
+
+xml = alfred.xml(results)
+alfred.write(xml)
+</string>
 				<key>subtext</key>
 				<string>Find Apps in Mac App Store</string>
 				<key>title</key>
 				<string>Find Apps in Store</string>
 				<key>type</key>
-				<integer>1</integer>
+				<integer>3</integer>
 				<key>withspace</key>
 				<true/>
 			</dict>
@@ -116,78 +280,8 @@ echo $wf-&gt;toxml();</string>
 			<string>alfred.workflow.input.scriptfilter</string>
 			<key>uid</key>
 			<string>008BEB46-2A21-4D90-A585-9E220A388C69</string>
-		</dict>
-		<dict>
-			<key>config</key>
-			<dict>
-				<key>argumenttype</key>
-				<integer>0</integer>
-				<key>escaping</key>
-				<integer>0</integer>
-				<key>keyword</key>
-				<string>app</string>
-				<key>runningsubtext</key>
-				<string>Searching now, please wait...</string>
-				<key>script</key>
-				<string>require_once(&apos;workflows.php&apos;);
-$wf = new Workflows();
-
-$orig = &quot;{query}&quot;;
-$json = $wf-&gt;request( &quot;http://itunes.apple.com/search?country=cn&amp;entity=software&amp;limit=25&amp;term=&quot;.urlencode( $orig ) );
-$json = json_decode( $json, ture);
-$int = 1;
-$json=$json[&apos;results&apos;];
-
-$wf-&gt;result( &quot;searchinstore&quot;, &quot;itunes://ax.search.itunes.apple.com/WebObjects/MZSearch.woa/wa/search?term=&quot;.urlencode( $orig ), &apos;Search apps with keyword &quot;&apos;.$orig.&apos;&quot;&apos;, &apos;Open iTunes and search apps with what you type.&apos;, &quot;icon.png&quot;  );
-
-
-foreach( $json as $sugg ):
-	$data = $sugg[&apos;trackCensoredName&apos;];
-	$url = preg_replace(&quot;/^https?/&quot;, &quot;itunes&quot;, $sugg[&apos;trackViewUrl&apos;]);
-	
-	$type = &quot;for iPhone	&quot;;
-	
-	if( in_array(&quot;iosUniversal&quot;, $sugg[&apos;features&apos;]) ):
-		$type = &quot;Universal	&quot;;
-	endif;
-	
-	if( count($sugg[&apos;screenshotUrls&apos;]) == 0):
-		$type = &quot;for iPad	&quot;;
-	endif;
-
-	$wf-&gt;result( 
-		$int.&apos;.&apos;.time()
-		, &quot;$url&quot;, &quot;$data&quot;
-		, $type.&apos; &apos;.$sugg[&apos;formattedPrice&apos;]
-			.&apos; 	Version &apos;.$sugg[&apos;version&apos;]
-			.&apos;  	Ratings : &apos;.number_format($sugg[&apos;averageUserRating&apos;], 1, &apos;.&apos;, &apos;&apos;)
-			.&apos; / 5	from &apos;.number_format($sugg[&apos;userRatingCount&apos;])
-			.&apos; users  by &apos;.$sugg[&apos;artistName&apos;]
-		, &quot;icon.png&quot;  );
-	$int++;
-endforeach;
-
-$results = $wf-&gt;results();
-if ( count( $results ) == 1 ):
-
-	$wf-&gt;popresults();
-	$wf-&gt;result( &apos;googlesuggest&apos;, &apos;https://www.google.com/search?ie=UTF-8&amp;oe=UTF-8&amp;q=&apos;.urlencode( $orig ), &apos;Nothing Found&apos;, &apos;No search apps found. Search Google for &apos;.$orig, &apos;GoogleIcon.png&apos; );
-endif;
-
-echo $wf-&gt;toxml();</string>
-				<key>subtext</key>
-				<string>Find apps in iTunes App Store</string>
-				<key>title</key>
-				<string>Find Apps in Store</string>
-				<key>type</key>
-				<integer>1</integer>
-				<key>withspace</key>
-				<true/>
-			</dict>
-			<key>type</key>
-			<string>alfred.workflow.input.scriptfilter</string>
-			<key>uid</key>
-			<string>93843284-FB0D-40F4-9660-FD9D9F19CFA9</string>
+			<key>version</key>
+			<integer>0</integer>
 		</dict>
 	</array>
 	<key>readme</key>
