@@ -1,8 +1,8 @@
 ## Update to v2.0
 
-The Alfred workflow for Searching in AppStore( or Mac App Store) now update to v2.0!
+The Alfred workflow for digging in App Store(or Mac App Store) now update to v2.0!
 
-In this time, I rewrote workflow with python(v2.7). The most Importantly is the new workflow can detect your OS local settings to switch different region to search, and show results with your language.
+In this time, I rewrote workflow with python(v2.7). The most important thing is the new workflow can detect your OS local settings to choose the right region to search, and show results with appropriate language.
 
 I hope you will enjoy this. And welcome to report issues or your suggestions.
 
